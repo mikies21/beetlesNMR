@@ -3,12 +3,12 @@
 #' @title NMRMetab_average_prediction
 #' @name NMRMetab_PLSDA_average_prediction
 #' @export
-#' @description This function will take in either a object of class data.frame and a using a second dataframe with a list of all the metabolite identifed, will return the CRS score for all the bins. this could work with other metabolite identifiers; for example bins with the name of the     metabolite, as  log as they are unique. mistakes could happen when greple take NAD and NADH
+#' @description repeat the train and test split, vip extraction and prediction over number of iterations. to extract average prediction metrics
 #' @author Michele Fresneda Alarcon
-#' @param dat a data.frame. Column as variable and rows as sample
-#' @param groupID a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'
-#' @param components_model boolean. save all into result into file
-#' @param iterations something
+#' @param dat a data.frame. Column as variable and rows as sample. data already nomalised
+#' @param groupID a string. name of the column with the groupings
+#' @param components_model integer. number of maximum componets in the model
+#' @param iterations repetitions
 
 
 
@@ -18,8 +18,8 @@ average_prediction_metrics = function(dat,
                                       components_model = 5,
                                       iterations = 5){
   predictions_list <- list()
-  pred = list()
-  vips = list()
+  pred <- list()
+  vips <- list()
 
   for (i in 1:components_model) {
     set.seed(21)
@@ -75,9 +75,15 @@ average_prediction_metrics = function(dat,
   vips = vips %>%
     dplyr::bind_rows(.id ='run')
 
-  vips = vips %>% dplyr::select(run, metabolite, comp2) %>%
+  vips = vips %>%
+    dplyr::select(run, metabolite, comp2) %>%
     tidyr::pivot_wider(names_from = 'metabolite',values_from = 'comp2') %>%
-    t() %>% janitor::row_to_names(1) %>%as.data.frame() %>% tibble::rownames_to_column('metabolite') %>% tibble::as_tibble()
+    t() %>%
+    janitor::row_to_names(1) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column('metabolite') %>%
+    tibble::as_tibble()
+
   vips[1:iterations+1] <- sapply(vips[1:iterations+1], as.numeric)
   return(list('predictions' = predictions_list,'vips' = vips))
 }

@@ -20,4 +20,6 @@ Imports:
     rsample,
     mixOmics,
     tibble,
-    yardstick
+    yardstick,
+    janitor,
+    tidyr

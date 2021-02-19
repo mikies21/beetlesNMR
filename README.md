@@ -1,3 +1,3 @@
 # beetlesNMR
 
-analysis tools for NMR analysis
+analysis tools for NMR analysis from the univeristy of Liverpool

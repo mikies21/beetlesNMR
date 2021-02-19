@@ -9,28 +9,28 @@
 #' @param save_excell boolean. save all into result into file
 
 
-get_vips_dat = function(dat){
-  plsda_model <- plsda(
+get_vips = function(dat){
+  plsda_model <- mixOmics::plsda(
     X = dat[, 9:ncol(dat)],
     Y = factor(dat[, 'disease_status']),
     ncomp = 5
   ) ### change number of components appropiately
 
-  vips = vip(plsda_model) %>%
+  vips = mixOmics::vip(plsda_model) %>%
     as.data.frame() %>%
-    rownames_to_column('metabolite') %>%
-    tibble %>%
+    tibble::rownames_to_column('metabolite') %>%
+    tibble::tibble() %>%
     #dplyr::filter(comp2 > 1) %>%
-    arrange(desc(comp1)) %>%
+    dplyr::arrange(desc(comp1)) %>%
     dplyr::filter(comp1 > 1)
 
-  met =vips$metabolite
+  met = vips$metabolite
 
   plot_vips = ggplot2::ggplot(vips, aes(x = reorder(metabolite, comp1), y = comp1)) +
-    geom_point(size = 3, col = "#B31B21") +
-    coord_flip() +
-    theme_bw(base_size = 13) +
-    labs(x = 'metabolite',title = 'VIP scores of Healthy vs Disease neutrophils',
+    ggplot2::geom_point(size = 3, col = "#B31B21") +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw(base_size = 13) +
+    ggplot2::labs(x = 'metabolite',title = 'VIP scores of Healthy vs Disease neutrophils',
          subtitle = 'neutrophils treated with JAK inhibitor')
 
   output = list('VIP_df' = vips, 'plot_vips' = plot_vips)

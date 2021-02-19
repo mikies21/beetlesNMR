@@ -14,16 +14,16 @@ average_prediction_metrics(
 )
 }
 \arguments{
-\item{dat}{a data.frame. Column as variable and rows as sample}
+\item{dat}{a data.frame. Column as variable and rows as sample. data already nomalised}
 
-\item{groupID}{a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'}
+\item{groupID}{a string. name of the column with the groupings}
 
-\item{components_model}{boolean. save all into result into file}
+\item{components_model}{integer. number of maximum componets in the model}
 
-\item{iterations}{something}
+\item{iterations}{repetitions}
 }
 \description{
-This function will take in either a object of class data.frame and a using a second dataframe with a list of all the metabolite identifed, will return the CRS score for all the bins. this could work with other metabolite identifiers; for example bins with the name of the     metabolite, as  log as they are unique. mistakes could happen when greple take NAD and NADH
+repeat the train and test split, vip extraction and prediction over number of iterations. to extract average prediction metrics
 }
 \author{
 Michele Fresneda Alarcon

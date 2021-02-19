@@ -2,10 +2,10 @@
 % Please edit documentation in R/NMRMetab_vip_extraction.R
 \name{NMRMetab_PLSDA_VIP}
 \alias{NMRMetab_PLSDA_VIP}
-\alias{get_vips_dat}
+\alias{get_vips}
 \title{VIP extraction}
 \usage{
-get_vips_dat(dat)
+get_vips(dat)
 }
 \arguments{
 \item{dat}{a data.frame. Column as variable and rows as sample}
