@@ -1,14 +1,15 @@
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' @import ggplot2
-#' @import purrr
-#' @importFrom Hmisc rcorr
-#' @importFrom ggrepel geom_text_repel
-#' @importFrom graphics abline text
-#' @importFrom stats TukeyHSD anova aov p.adjust predict reorder
+#' @import dplyr
+#' @importFrom mixOmics plsda perf vip
+#' @import RColorBrewer
 #' @importFrom utils write.csv
-#' @importFrom stats median sd
-#' @importFrom xlsx createWorkbook createSheet addDataFrame saveWorkbook
+#' @importFrom stats median sd predict approx
+#' @importFrom bayestestR area_under_curve
+#' @importFrom ggrepel geom_text_repel
+#' @importFrom Hmisc rcorr
 #' @importFrom janitor row_to_names
-#' @importFrom tidyr pivot_wider
+#' @importFrom rsample initial_split training testing
+#' @import tibble
+#' @importFrom stringr str_replace_all
 NULL
-
