@@ -24,4 +24,6 @@ Imports:
     janitor,
     tidyr,
     bayestestR,
-    stringr
+    stringr,
+    RColorBrewer,
+    magrittr

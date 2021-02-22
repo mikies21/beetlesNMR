@@ -57,9 +57,6 @@ NMRMetab_plot_binned <- function(binned_data, index_col = 2, group_var = 'sample
   }
 
 
-
-
-
 #' @title plot NMR_data with bins
 #' @name NMRMetab_plot_raw_with_bins
 #' @export
@@ -69,30 +66,37 @@ NMRMetab_plot_binned <- function(binned_data, index_col = 2, group_var = 'sample
 #' @param pattern_file pattern file with bins
 #' @param min_x double
 #' @param max_x double
+#' @param ymax int height of the rectangle and of the text for the name of the bin
 
 
-NMRMetab_plot_raw_with_bins <- function(raw_data, pattern_file, min_x, max_x) {
+NMRMetab_plot_raw_with_bins <- function(raw_data, pattern_file = NULL, min_x, max_x, ymax = 1000000) {
 
-  ppm <- min_ppm <- max_ppm <- bin <- value <- sampleID <- change <- appr
+  ppm <- min_ppm <- max_ppm <- bin <- value <- sampleID <- change <- NULL
 
   binnend_raw = raw_data %>%
     dplyr::filter(between(ppm,left = min_x, right = max_x))
-  binnend_pattern = pattern_file %>%
-    dplyr::filter(min_ppm > min_x & max_ppm < max_x)
+
+  if (is.null(pattern_file)) {
+    data_to_plot = binnend_raw %>%
+      tidyr::pivot_longer(!ppm, names_to = 'sampleID',values_to = 'value')
+    ggplot2::ggplot() +
+      ggplot2::geom_line(data = data_to_plot,aes(x = ppm, y = value, col = sampleID),show.legend = F) +
+      ggplot2::theme_bw(base_size = 7)
+  }
+  else{
+    binnend_pattern = pattern_file %>%
+      dplyr::filter(min_ppm > min_x & max_ppm < max_x)
 
 
+    binnend_pattern = binnend_pattern %>% dplyr::mutate(change = max_ppm - min_ppm)
 
-  binnend_pattern = binnend_pattern %>% dplyr::mutate(change = max_ppm - min_ppm)
-
-  data_to_plot = binnend_raw %>%
-    tidyr::pivot_longer(!ppm & !bin,names_to = 'sampleID',values_to = 'value')
-  ggplot2::ggplot() +
-    ggplot2::geom_line(data = data_to_plot,aes(x = ppm, y = value, col = sampleID),show.legend = F) +
-    ggplot2::theme_bw(base_size = 7) +
-    ggplot2::theme(axis.text.x  = element_text(angle = 90)) +
-    geom_rect(data = binnend_pattern, aes(xmin = min_ppm, xmax =max_ppm, ymin = 0, ymax = 2000000), alpha = 0.2, col = 'black')+
-    geom_text(data= binnend_pattern, aes(x=min_ppm+change/2, y=2000000, label=bin,angle = 45), size=3)
-
-
+    data_to_plot = binnend_raw %>%
+      tidyr::pivot_longer(!ppm, names_to = 'sampleID',values_to = 'value')
+    ggplot2::ggplot() +
+      ggplot2::geom_line(data = data_to_plot,aes(x = ppm, y = value, col = sampleID),show.legend = F) +
+      ggplot2::theme_bw(base_size = 7) +
+      geom_rect(data = binnend_pattern, aes(xmin = min_ppm, xmax =max_ppm, ymin = 0, ymax = ymax), alpha = 0.2, col = 'black')+
+      ggrepel::geom_text_repel(data= binnend_pattern, aes(x=min_ppm+change/2, y=ymax, label=bin,angle = 45), size=3)
+  }
 
 }

@@ -4,7 +4,13 @@
 \alias{NMRMetab_plot_raw_with_bins}
 \title{plot NMR_data with bins}
 \usage{
-NMRMetab_plot_raw_with_bins(raw_data, pattern_file, min_x, max_x)
+NMRMetab_plot_raw_with_bins(
+  raw_data,
+  pattern_file = NULL,
+  min_x,
+  max_x,
+  ymax = 1e+06
+)
 }
 \arguments{
 \item{raw_data}{a data.frame. Column as variable and rows as sample}
@@ -14,6 +20,8 @@ NMRMetab_plot_raw_with_bins(raw_data, pattern_file, min_x, max_x)
 \item{min_x}{double}
 
 \item{max_x}{double}
+
+\item{ymax}{int height of the rectangle and of the text for the name of the bin}
 }
 \description{
 plot binned spectra

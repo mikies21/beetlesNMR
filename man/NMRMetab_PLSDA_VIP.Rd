@@ -2,17 +2,19 @@
 % Please edit documentation in R/NMRMetab_vip_extraction.R
 \name{NMRMetab_PLSDA_VIP}
 \alias{NMRMetab_PLSDA_VIP}
-\alias{get_vips}
+\alias{NMRMetab_get_vips}
 \title{VIP extraction}
 \usage{
-get_vips(dat)
+NMRMetab_get_vips(dat, groupID = 1, index_col = 3, ncomp = 2)
 }
 \arguments{
 \item{dat}{a data.frame. Column as variable and rows as sample}
 
-\item{metabolite_list}{a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'}
+\item{groupID}{string. name off the fvariable containing your grouping details}
 
-\item{save_excell}{boolean. save all into result into file}
+\item{index_col}{index colum oif first mobservation}
+
+\item{ncomp}{number of components}
 }
 \description{
 This function will take in either a object of class data.frame and a using a second dataframe with a list of all the metabolite identifed, will return the CRS score for all the bins. this could work with other metabolite identifiers; for example bins with the name of the     metabolite, as  log as they are unique. mistakes could happen when greple take NAD and NADH
