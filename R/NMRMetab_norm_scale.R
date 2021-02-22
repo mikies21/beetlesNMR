@@ -12,7 +12,6 @@
 
 
 
-
 NMRMetab_norm_scale = function(data, index_col = 3, normalisation = 'None', bin = NA, scaling = 'None', writeToFile = F){
 
   #separate data from groups
