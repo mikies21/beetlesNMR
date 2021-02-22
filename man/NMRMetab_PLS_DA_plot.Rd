@@ -7,24 +7,24 @@
 NMRMetab_PLS_DA_plot(
   data,
   groupID = "group",
-  index_column = 3,
+  index_col = 3,
   components = c(1, 2),
   scale = F,
   elipses = F
 )
 }
 \arguments{
+\item{data}{a matrix or a data.frame. rows are samples and columns are grouping and metabolites or bins}
+
 \item{groupID}{a vercors with the column name contining the grouping of the data. This parameter is to be use to mae sure that the 2 new data.frames created have all groups mentioned in the column we identifiy}
+
+\item{index_col}{name of the column containing the groups}
 
 \item{components}{a vector with 2 integer values. default set to 1 and 2}
 
 \item{scale}{does it need scaling}
 
 \item{elipses}{boolean. add elipsess around the groups? defailt is False}
-
-\item{dat}{a matrix or a data.frame. rows are samples and columns are grouping and metabolites or bins}
-
-\item{index_col}{name of the column containing the groups}
 }
 \description{
 PLSDA score plot
