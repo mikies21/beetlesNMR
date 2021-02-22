@@ -2,8 +2,12 @@
 
 export(NMRMetabCRS)
 export(NMRMetab_anova)
+export(NMRMetab_binning)
 export(NMRMetab_norm_scale)
-export(average_prediction_metrics)
+export(NMRMetab_plot_binned)
+export(NMRMetab_plot_raw_with_bins)
+export(NMRMmetab_readBruker)
+export(NMRmetab_average_prediction_metrics)
 export(get_vips)
 import(dplyr)
 import(ggplot2)

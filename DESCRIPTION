@@ -22,4 +22,6 @@ Imports:
     tibble,
     yardstick,
     janitor,
-    tidyr
+    tidyr,
+    bayestestR,
+    stringr
