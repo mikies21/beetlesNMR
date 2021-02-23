@@ -7,13 +7,15 @@
 NMRMetab_PCA_plot(data, groupID, index_col = 2, elipses = F, pcs = c(1, 2))
 }
 \arguments{
+\item{data}{a data.frame. Column as variable and rows as sample}
+
 \item{groupID}{string. name off the fvariable containing your grouping details}
 
 \item{index_col}{index colum oif first mobservation}
 
 \item{elipses}{number of components}
 
-\item{dat}{a data.frame. Column as variable and rows as sample}
+\item{pcs}{principal component to plot}
 }
 \description{
 This function will take in either a object of class data.frame and a using a second dataframe with a list of all the metabolite identifed, will return the CRS score for all the bins. this could work with other metabolite identifiers; for example bins with the name of the     metabolite, as  log as they are unique. mistakes could happen when greple take NAD and NADH

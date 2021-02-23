@@ -4,10 +4,11 @@
 #' @export
 #' @description This function will take in either a object of class data.frame and a using a second dataframe with a list of all the metabolite identifed, will return the CRS score for all the bins. this could work with other metabolite identifiers; for example bins with the name of the     metabolite, as  log as they are unique. mistakes could happen when greple take NAD and NADH
 #' @author Michele Fresneda Alarcon
-#' @param dat a data.frame. Column as variable and rows as sample
+#' @param data a data.frame. Column as variable and rows as sample
 #' @param groupID string. name off the fvariable containing your grouping details
 #' @param elipses number of components
 #' @param index_col index colum oif first mobservation
+#' @param pcs principal component to plot
 
 NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(1,2)) {
 
