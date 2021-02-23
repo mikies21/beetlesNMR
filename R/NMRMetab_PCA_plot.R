@@ -53,6 +53,7 @@ NMRMetab_PCA_loading_plot = function(data, index_col = 2, pcs = c(1,2)) {
 
   PCA <- prcomp(data[index_col:ncol(data)], center = F, scale. = F)
 
+  drugs_scores <- as.data.frame(PCA$x[, pcs]) ## just taking the first 20 comp. no need to go higher
   prop_var <- round(summary(PCA)$importance[2, ] * 100, digits = 2)
   prop_var <- prop_var[pcs]
   PCnames <- colnames(drugs_scores)[pcs]
