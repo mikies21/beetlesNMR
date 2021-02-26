@@ -7,6 +7,7 @@
 NMRmetab_average_prediction_metrics(
   dat,
   groupID = "disease_status",
+  pred_factor = NULL,
   index_col = 9,
   components_model = 5,
   iterations = 5,
@@ -20,6 +21,8 @@ NMRmetab_average_prediction_metrics(
 \item{dat}{a matrix or a data.frame. rows are samples and columns are grouping and metabolites or bins}
 
 \item{groupID}{a vercors with the column name contining the grouping of the data. This parameter is to be use to mae sure that the 2 new data.frames created have all groups mentioned in the column we identifiy}
+
+\item{pred_factor}{string. name of the group you want ptredction values. if set to null then only fist factor alphabetically ordered is used.}
 
 \item{index_col}{name of the column containing the groups}
 

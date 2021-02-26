@@ -6,7 +6,7 @@
 #' @importFrom utils write.csv
 #' @importFrom stats median sd approx
 #' @importFrom xlsx createWorkbook createSheet addDataFrame saveWorkbook
-#' @importFrom stats median sd predict approx reorder prcomp
+#' @importFrom stats median sd predict approx reorder prcomp relevel
 #' @importFrom bayestestR area_under_curve
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom Hmisc rcorr
@@ -15,3 +15,4 @@
 #' @import tibble
 #' @importFrom stringr str_replace_all
 NULL
+

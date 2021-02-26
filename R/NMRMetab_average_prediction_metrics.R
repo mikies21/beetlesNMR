@@ -11,11 +11,13 @@
 #' @param CV_validation string. either 'loo' default of 'Mfold'
 #' @param CV_folds integer. number of folds. only used for Mfold validation
 #' @param CV_repeats integer. number of repeats only used for Mfold validation
+#' @param pred_factor string. name of the group you want ptredction values. if set to null then only fist factor alphabetically ordered is used.
 #' @export
 
 
 NMRmetab_average_prediction_metrics = function(dat,
                                       groupID = 'disease_status',
+                                      pred_factor = NULL,
                                       index_col = 9,
                                       components_model = 5,
                                       iterations = 5,
@@ -24,6 +26,11 @@ NMRmetab_average_prediction_metrics = function(dat,
                                       CV_folds = 5,
                                       CV_repeats = 100){
   CV <- repeats <- .metric <- .estimator <- .estimate <- run <- comp <- type <- mahalanobis.dist <- metabolite <- NULL
+
+  if (is.null(pred_factor)) {
+    pred_factor <- 'not_set'
+  }
+
   predictions_list <- list()
   pred = list()
   vips = list()
@@ -66,22 +73,38 @@ NMRmetab_average_prediction_metrics = function(dat,
         as.data.frame() %>%
         tibble::rownames_to_column('metabolite')
 
-      prediction <- tibble::tibble(
-        "prediction" = factor(stats::predict(
-          plsda_model,
-          dat_test[index_col:ncol(dat_test)]
-        )$class$mahalanobis.dist[, i]), ### change number of components appropiately
-        "true_val" = factor(dat_test[, groupID])
-      )
+
+      prediction <- tibble::tibble("predictions" = factor(stats::predict(plsda_model,
+                                                                        dat_test[index_col:ncol(dat_test)])$class$mahalanobis.dist[, i]),### change number of components appropiately
+                                   "true_val" = factor(dat_test[, groupID]))
+
+
       #     prediction$prediction = relevel(prediction$prediction, ref = 'Healthy')#
       #     prediction$true_val = relevel(prediction$true_val, ref = 'Healthy')
-      pred[[j]] <- prediction %>%
-        yardstick::conf_mat(truth = "true_val", estimate = "prediction") %>%
-        summary() %>%
-        dplyr::filter(.metric %in% c("accuracy", "bal_accuracy", "precision", "recall", "f_meas")) %>%
-        dplyr::select(-.estimator)
+
+      ### chack if prediction and thruth have the same number of levels ####
+
+      if (all(levels(prediction$true_val) %in% levels(prediction$predictions))) {
+        print('all_levels present')
+
+        if (pred_factor != 'not_set') {
+          prediction <- prediction %>% mutate(predictions = relevel(predictions, pred_factor),
+                                              true_val = relevel(true_val, pred_factor))
+        }
+
+        pred[[j]] <- prediction %>%
+          yardstick::conf_mat(truth = "true_val", estimate = "predictions") %>%
+          summary() %>%
+          dplyr::filter(.metric %in% c("accuracy", "bal_accuracy", "precision", "recall", "f_meas")) %>%
+          dplyr::select(-.estimator)
+
+      } else {
+        print('not all levels present')
+        pred[[j]] <- NULL
+      }
 
     }
+
 
     predictions_list[[i]] = pred %>%
       dplyr::bind_rows(.id = "run") %>%
@@ -91,7 +114,6 @@ NMRmetab_average_prediction_metrics = function(dat,
   }
 
   predictions_list = predictions_list %>% dplyr::bind_rows(.id ='component')
-  print(predictions_list)
 
   names(vips) = c(paste(rep('run',iterations), 1:iterations, sep = ''))
   vips = vips %>%
@@ -117,26 +139,36 @@ NMRmetab_average_prediction_metrics = function(dat,
   #  tibble::as_tibble()
 
 #  vips[1:iterations+1] <- sapply(vips[1:iterations+1], as.numeric)
-  names(cvs) = c(paste(rep('run',iterations), 1:iterations, sep = ''))
-  cvs = dplyr::bind_rows(cvs, .id = 'run')
-  p = cvs %>%
-    dplyr::select(run, comp, type, mahalanobis.dist) %>%
-    dplyr::filter(type == 'BER') %>%
-    ggplot2::ggplot(ggplot2::aes(x = comp,
-                                 y = mahalanobis.dist,
-                                 linetype = type,
-                                 colour = run,
-                                 )) +
-    ggplot2::geom_line(stat = 'identity')+
-    ggplot2::geom_point()+
-    ggplot2::theme_bw()
+  if (run_CV){
+    names(cvs) = c(paste(rep('run',iterations), 1:iterations, sep = ''))
+    cvs = dplyr::bind_rows(cvs, .id = 'run')
+    p = cvs %>%
+      dplyr::select(run, comp, type, mahalanobis.dist) %>%
+      dplyr::filter(type == 'BER') %>%
+      ggplot2::ggplot(ggplot2::aes(x = comp,
+                                   y = mahalanobis.dist,
+                                   linetype = type,
+                                   colour = run,
+      )) +
+      ggplot2::geom_line(stat = 'identity')+
+      ggplot2::geom_point()+
+      ggplot2::theme_bw()
+
+    return(list('predictions' = predictions_list,
+                'vips' = vips,
+                'CVs' = cvs,
+                'cv_plot' = p,
+                'median_vips' = median_vips,
+                'mean_vips' = mean_vips,
+                'Pred_value' = pred_factor))
+
+  }
 
   return(list('predictions' = predictions_list,
               'vips' = vips,
-              'CVs' = cvs,
-              'cv_plot' = p,
               'median_vips' = median_vips,
-              'mean_vips' = mean_vips))
+              'mean_vips' = mean_vips,
+              'Pred_value' = pred_factor))
 }
 
 
