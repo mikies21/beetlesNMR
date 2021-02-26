@@ -1,6 +1,7 @@
 #' @title Binning of NMR spectra
 #' @name NMRMetab_binning
 #' @export
+#' @description using a pattern file and the data extracted from bruker experiment files. this function sues the bins min and max to get a value, area under the curve to attribute to tat particular bin
 #' @author Michele Fresneda Alarcon
 #' @param data a data.frame. Column as samples and rows as ppm. fits columm 'ppm'. this come from bruker topspin
 #' @param pattern_file a data.frame with column as 'min_ppm', max_ppm' and 'bin'. this is the pattern file the you created

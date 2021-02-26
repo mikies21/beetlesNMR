@@ -1,7 +1,7 @@
 #' @title read Bruker files
 #' @name NMRMmetab_readBruker
 #' @export
-#' @description takes the path where al the experiment files are, returns a dataframe with ppm as first column and samples as subsequent column
+#' @description takes the path where al the experiment files are, returns a dataframe with ppm as first column and samples as subsequent column. not working properly yet as evn tho data was previously aligned in topspin this was not reflected in this.
 #' @author Dr. Jie Hao
 #' @author Michele Fresneda Alarcon
 #' @param BrukerDataDir a string. path to the NMR experiment folder
