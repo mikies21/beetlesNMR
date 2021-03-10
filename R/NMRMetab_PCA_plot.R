@@ -23,16 +23,28 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
   PCnamex <- paste(PCnames[1], " (", prop_var[1], "%)", sep = "")
   PCnamey <- paste(PCnames[2], " (", prop_var[2], "%)", sep = "")
   col_group <- data[, groupID]
-  colnames(drugs_scores) <- c('PCx','PCy')
-  #drugs_scores = cbind.data.frame(group = )
-  plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx,y = PCy,col = col_group)) +
-    ggplot2::geom_point(size = 3)+
-    ggplot2::theme_bw(base_size = 16) +
-    ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey) +
-    ggplot2::scale_color_brewer(palette = 'Dark2')
 
-  if (elipses == T) {
-    plot1 = plot1 + ggplot2::stat_ellipse(aes(x = PCx, y = PCy, colour = col_group))
+  if (length(pcs)==3) {
+    PCnamez <- paste(PCnames[3], " (", prop_var[3], "%)", sep = "")
+    colnames(drugs_scores) <- c('PCx','PCy','PCz')
+    plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx, y = PCy, z = PCz, col = col_group)) +
+      ggplot2::geom_point(size = 3)+
+      ggplot2::theme_bw(base_size = 16) +
+      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey)
+      gg3D::axes_3D() +
+      gg3D::stat_3D() +
+      gg3D::labs_3D()
+  } else{
+    colnames(drugs_scores) <- c('PCx','PCy')
+    #drugs_scores = cbind.data.frame(group = )
+    plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx,y = PCy,col = col_group)) +
+      ggplot2::geom_point(size = 3)+
+      ggplot2::theme_bw(base_size = 16) +
+      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey)
+
+    if (elipses == T) {
+      plot1 = plot1 + ggplot2::stat_ellipse(aes(x = PCx, y = PCy, colour = col_group))
+    }
   }
   return(plot1)
 
