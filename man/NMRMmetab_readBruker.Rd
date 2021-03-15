@@ -10,7 +10,7 @@ NMRMmetab_readBruker(BrukerDataDir)
 \item{BrukerDataDir}{a string. path to the NMR experiment folder}
 }
 \description{
-takes the path where al the experiment files are, returns a dataframe with ppm as first column and samples as subsequent column
+takes the path where al the experiment files are, returns a dataframe with ppm as first column and samples as subsequent column. not working properly yet as evn tho data was previously aligned in topspin this was not reflected in this.
 }
 \author{
 Dr. Jie Hao

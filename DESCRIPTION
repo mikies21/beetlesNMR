@@ -26,4 +26,5 @@ Imports:
     bayestestR,
     stringr,
     RColorBrewer,
-    magrittr
+    magrittr,
+    gg3D

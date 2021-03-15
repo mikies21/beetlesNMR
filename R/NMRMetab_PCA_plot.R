@@ -12,7 +12,7 @@
 
 NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(1,2)) {
 
-  PCx <- PCy <- NULL
+  PCx <- PCy <- PCz <- NULL
 
   PCA <- prcomp(data[index_col:ncol(data)], center = F, scale. = F)
 
@@ -28,9 +28,8 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
     PCnamez <- paste(PCnames[3], " (", prop_var[3], "%)", sep = "")
     colnames(drugs_scores) <- c('PCx','PCy','PCz')
     plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx, y = PCy, z = PCz, col = col_group)) +
-      ggplot2::geom_point(size = 3)+
       ggplot2::theme_bw(base_size = 16) +
-      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey)
+      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey, z = PCnamez) +
       gg3D::axes_3D() +
       gg3D::stat_3D() +
       gg3D::labs_3D()

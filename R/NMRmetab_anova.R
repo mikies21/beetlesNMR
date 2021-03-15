@@ -47,16 +47,12 @@ NMRMetab_anova = function(data, index_col = 3, group_test = 'group', sigLevel = 
   res = do_anova_m(data_, grp, adjustMethod = adjMethod, thresh = sigLevel)
   print_anova_res(res, sigLvl = sigLevel)
 
-  outDir = makeTSFolder('ANOVA')
-  write.csv(res$anova_pvals, row.names = T, file=file.path(outDir,'anova_pvals.csv'))
-  if (ncol(res$tukey_pvals) != 0 ) {
-    write.csv(res$tukey_pvals, row.names = T, file=file.path(outDir,'tukey_pvals.csv'))
-  }
+
   p = plot.Pvals(res$anova_pvals,sigLvl = sigLevel)
   p
   #ggsave(path = outDir, filename = 'P_values.pdf', plot = p)
 
-  #return(res)
+  return(list('results' = res, 'p.vals_plot' = p))
 }
 
 
@@ -144,14 +140,5 @@ print_anova_res = function(res, sigLvl = 0.05){
       cat(sprintf('\t %s \t\t %d\n', colnames(res$tukey_pvals)[i], sum(res$tukey_pvals[i,]<=sigLvl)))
     }
   }
-}
-
-#' @noRd
-makeTSFolder = function(prefix){
-  ts = format(Sys.time(), "%b_%d_%Y_%X")
-  ts<-gsub(":","-",ts)
-  tsDir = paste(prefix, ts, sep='_')
-  if(!file.exists(file.path(getwd(),tsDir))) dir.create(file.path(getwd(),tsDir))
-  return(file.path(getwd(),tsDir))
 }
 
