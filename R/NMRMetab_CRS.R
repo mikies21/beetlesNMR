@@ -29,15 +29,16 @@
 #' @author Michele Fresneda Alarcon
 #' @param dat a data.frame. Column as variable and rows as sample
 #' @param metabolite_list a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'
-#' @param save_excell boolean. save all into result into file
+#' @param save_csv boolean. save all into result into file
+#' @param correlation_type character string. type of correlation to use for CRS score 'preason'(default) or 'spearman'
 
 
 
-NMRMetabCRS <- function(dat, metabolite_list, save_excell = F) {
+NMRMetabCRS <- function(dat, metabolite_list, correlation_type = 'pearson', save_csv = F) {
   HMDB <- metabolite_list$HMDB # a vector of HMDB from the metabolite_list data
   matches <- metabolite_list$Metab # a second vector of the matching names of HMDBs
 
-  #### DEFININ THE VARIABLE LOCALLY TO THE FUNCTION #####
+  #### DEFINING THE VARIABLE LOCALLY TO THE FUNCTION #####
   CRS_score <- Metabolite <- median_score <- Standard_dev <- sigLevel <- NULL
 
 
@@ -73,7 +74,7 @@ NMRMetabCRS <- function(dat, metabolite_list, save_excell = F) {
   CRS_scores <- lapply(corr_matrix, function(x) {
     if (ncol(x) > 0) {
       # CRS_score percentace is calculated as the mean of the rows *100
-      x %>% dplyr::transmute(metab_bins = rownames(x), CRS_score = rowMeans(x) * 100)
+      x %>% dplyr::transmute(metab_bins = rownames(x), CRS_score = rowMeans(x) * 100) %>% tibble::tibble()
     } else {
       # print to the console in case a metabolite in our list is not actually present in our data
       print("0 columns, skipping")
@@ -89,39 +90,58 @@ NMRMetabCRS <- function(dat, metabolite_list, save_excell = F) {
     round(digits = 2)
 
   frequency_metabs <- do.call(dplyr::bind_rows, list(CRS_scores, .id = "Metabolite")) %>%
-    dplyr::filter(Metabolite != "UNKNOWN") %>%
     count(Metabolite)
 
-  plot_bar <- ggplot(frequency_metabs, aes(x = Metabolite, y = n)) +
+  plot_bar <- frequency_metabs %>%
+    dplyr::filter(Metabolite != "UNKNOWN") %>%
+    ggplot(aes(x = Metabolite, y = n)) +
     geom_bar(stat = "identity") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90)) +
     labs(y = "frequency", title = "Metabolite frequency", subtitle = "number of times each metabilite was identified in binned data")
+
+  summary_data <- dplyr::bind_rows(CRS_scores, .id = 'Metabolite') %>%
+    dplyr::mutate(bin_IDs = gsub("^.*_", "", metab_bins)) %>%
+    tidyr::nest(data = c(metab_bins,CRS_score,bin_IDs)) %>%
+    dplyr::right_join(frequency_metabs, by =c('Metabolite')) %>%
+    dplyr::mutate(
+      highest_corr = purrr::map(data, function(x){
+        max_score <- x %>% dplyr::pull('CRS_score') %>% max()
+      }),
+      smallest_corr = purrr::map(data, function(x){
+        max_score <- x %>% dplyr::pull('CRS_score') %>% min()
+      })) %>%
+    tidyr::unnest(cols = c(highest_corr, smallest_corr))
+
+
+
 
   output = list('corr_data'= corr_data,
                 'corrmatrix'= corr_matrix,
                 'CRS_score'= CRS_scores,
                 'CRS_pass' = CRS_pass,
                 'frequency_table' = frequency_metabs,
-                'frequency_plot' = plot_bar)
+                'frequency_plot' = plot_bar,
+                'summary_data' = summary_data)
 
-  ##### save crs dataframes into excell multisheet
+  ##### save crs dataframes into csv
 
-  #You now have a list in which each element is a data frame and each element's
-  #name is the name of the file. Now, let's write each data frame to a different worksheet
-  #in the same Excel workbook and then save the file as an xlsx file:
-  if (save_excell == T) {
-
-    wb = xlsx::createWorkbook()
-
-    lapply(names(CRS_scores),
-           function(df) {
-             sheet = xlsx::createSheet(wb, df)
-             xlsx::addDataFrame(CRS_scores[[df]], sheet = sheet, row.names = FALSE)
-           } )
-
-    xlsx::saveWorkbook(wb, "CRS_score.xlsx")
+  #
+  if (save_csv == T) {
+    dplyr::bind_rows(CRS_scores, .id = 'Metabolite') %>% write.csv(file = 'CRS_scores.csv',row.names = F)
   }
+  #if (save_excell == T) {
+
+    #wb = xlsx::createWorkbook()
+
+    #lapply(names(CRS_scores),
+     #      function(df) {
+      #       sheet = xlsx::createSheet(wb, df)
+       #      xlsx::addDataFrame(CRS_scores[[df]], sheet = sheet, row.names = FALSE)
+        #   } )
+
+    #xlsx::saveWorkbook(wb, "CRS_score.xlsx")
+  #}
 
 
   return(output)
@@ -133,10 +153,10 @@ NMRMetabCRS <- function(dat, metabolite_list, save_excell = F) {
 #' @title swap metabolite names to HMDB
 #' @name NMRMetab_names_to_HMDB
 #' @export
-#' @description
+#' @description switches the names to HMDB from the original NMR dataframe
 #' @author Michele Fresneda Alarcon
 #' @param dat a data.frame. Column as variable and rows as sample
-#' @param metabolite_list a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'
+#' @param metabolite_list a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab' (each eanty in metab must be equal to the acual names assigend in the dat vatiable)
 #' @param index_col column number with first metabolite
 
 

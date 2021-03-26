@@ -9,12 +9,12 @@ NMRMetab_names_to_HMDB(dat, metabolite_list, index_col = 3)
 \arguments{
 \item{dat}{a data.frame. Column as variable and rows as sample}
 
-\item{metabolite_list}{a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'}
+\item{metabolite_list}{a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab' (each eanty in metab must be equal to the acual names assigend in the dat vatiable)}
 
 \item{index_col}{column number with first metabolite}
 }
 \description{
-swap metabolite names to HMDB
+switches the names to HMDB from the original NMR dataframe
 }
 \author{
 Michele Fresneda Alarcon

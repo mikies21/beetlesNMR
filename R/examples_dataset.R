@@ -1,9 +1,8 @@
 
 
 #' @docType data
-#' @usage data(JAKi)
+#' @title sample data for analysis
 #' @keywords datasets
-#'
-#' @examples
-#' data(JAKi)
+'JAKi_data'
+
 
