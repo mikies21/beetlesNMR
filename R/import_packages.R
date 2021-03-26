@@ -14,6 +14,6 @@
 #' @importFrom rsample initial_split training testing
 #' @import tibble
 #' @importFrom stringr str_replace_all
-#' @importFrom gg3D axes_3D stat_3D labs_3D
+#' @importFrom rgl plot3d
 NULL
 

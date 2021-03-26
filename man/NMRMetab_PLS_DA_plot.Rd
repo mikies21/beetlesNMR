@@ -10,7 +10,8 @@ NMRMetab_PLS_DA_plot(
   index_col = 3,
   components = c(1, 2),
   scale = F,
-  elipses = F
+  elipses = F,
+  size_point = 3
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ NMRMetab_PLS_DA_plot(
 \item{scale}{does it need scaling}
 
 \item{elipses}{boolean. add elipsess around the groups? defailt is False}
+
+\item{size_point}{double. control the size of the plotted points}
 }
 \description{
 PLSDA score plot

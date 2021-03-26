@@ -27,4 +27,5 @@ Imports:
     stringr,
     RColorBrewer,
     magrittr,
-    gg3D
+    gg3D,
+    rgl

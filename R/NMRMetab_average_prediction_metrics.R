@@ -182,10 +182,11 @@ NMRmetab_average_prediction_metrics = function(dat,
 #' @param components a vector with 2 integer values. default set to 1 and 2
 #' @param scale does it need scaling
 #' @param elipses boolean. add elipsess around the groups? defailt is False
+#' @param size_point double. control the size of the plotted points
 #' @export
 
 
-NMRMetab_PLS_DA_plot <- function(data, groupID = 'group',index_col = 3 ,components = c(1,2), scale = F, elipses = F) {
+NMRMetab_PLS_DA_plot <- function(data, groupID = 'group',index_col = 3 ,components = c(1,2), scale = F, elipses = F, size_point = 3) {
 
   compx <- compy <- group <- NULL
 
@@ -193,31 +194,49 @@ NMRMetab_PLS_DA_plot <- function(data, groupID = 'group',index_col = 3 ,componen
     data = NMRMetab_norm_scale(data = data,index_col = index_col,scaling = 'Pareto')
   }
 
-
   meta_data = data[,1:c(index_col-1)]
   matrix = data[,index_col:ncol(data)]
   #scale the data
 
   model = mixOmics::plsda(X=matrix,
-                Y= meta_data[,groupID],
-                ncomp = max(components))
+                          Y= meta_data[,groupID],
+                          ncomp = max(components))
 
   comps_scores = cbind.data.frame('group' = meta_data[,groupID], model$variates$X[,components])
-  colnames(comps_scores) <- c('group', 'compx', 'compy')
 
-  p = ggplot2::ggplot(comps_scores,
-             aes(x= compx,
-                 y = compy,
-                 colour = group), fill = 'black') +
-    ggplot2::geom_point(size = 3)+
-    ggplot2::theme_bw(base_size = 16)+
-    ggplot2::scale_color_brewer(palette = 'Dark2')+
-    ggplot2::labs(title ='score plot',
-         x = paste('comp', components[1], sep = ''),
-         y = paste('comp', components[2], sep = '')) +
-    ggplot2::guides(fill=guide_legend(title=groupID))
-  if (elipses == T) {
-    p = p + ggplot2::stat_ellipse(aes(x = compx, y = compy, colour = group))
+  if (length(components)==3) {
+    colnames(comps_scores) <- c('group', 'compx', 'compy', 'compz')
+
+    mycolors <- RColorBrewer::brewer.pal(n = 8,name = 'Dark2')[1:length(unique(comps_scores$group))]
+    comps_scores$color <- mycolors[as.numeric(as.factor(comps_scores$group))]
+
+    p <- rgl::plot3d(
+      x=comps_scores$compx, y=comps_scores$compy, z=comps_scores$compz,
+      col = comps_scores$color,
+      type = 's',
+      size = size_point,
+      radius = size_point,
+      xlab= paste('comp', components[1], sep = ''),
+      ylab= paste('comp', components[2], sep = ''),
+      zlab= paste('comp', components[3], sep = ''),
+      box = F)
+  } else {
+    colnames(comps_scores) <- c('group', 'compx', 'compy')
+
+    p = ggplot2::ggplot(comps_scores,
+                        aes(x= compx,
+                            y = compy,
+                            colour = group), fill = 'black') +
+      ggplot2::geom_point(size = size_point)+
+      ggplot2::theme_bw(base_size = 16)+
+      ggplot2::scale_color_brewer(palette = 'Dark2')+
+      ggplot2::labs(title ='score plot',
+                    x = paste('comp', components[1], sep = ''),
+                    y = paste('comp', components[2], sep = '')) +
+      ggplot2::guides(fill=guide_legend(title=groupID))
+    if (elipses == T) {
+      p = p + ggplot2::stat_ellipse(aes(x = compx, y = compy, colour = group))
+    }
   }
   return(p)
 }

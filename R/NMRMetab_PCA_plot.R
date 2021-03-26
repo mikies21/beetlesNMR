@@ -8,9 +8,10 @@
 #' @param groupID string. name off the fvariable containing your grouping details
 #' @param elipses number of components
 #' @param index_col index colum oif first mobservation
-#' @param pcs principal component to plot
+#' @param pcs vector with integers only. principal components to plot default 1, 2
+#' @param size_point double. control the size of the points in the plot
 
-NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(1,2)) {
+NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(1,2), size_point = 3) {
 
   PCx <- PCy <- PCz <- NULL
 
@@ -27,17 +28,27 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
   if (length(pcs)==3) {
     PCnamez <- paste(PCnames[3], " (", prop_var[3], "%)", sep = "")
     colnames(drugs_scores) <- c('PCx','PCy','PCz')
-    plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx, y = PCy, z = PCz, col = col_group)) +
-      ggplot2::theme_bw(base_size = 16) +
-      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey, z = PCnamez) +
-      gg3D::axes_3D() +
-      gg3D::stat_3D() +
-      gg3D::labs_3D()
+
+    drugs_scores$col_group3d <- col_group
+    mycolors <- RColorBrewer::brewer.pal(n = 8,name = 'Dark2')[1:length(unique(col_group))]
+    drugs_scores$color <- mycolors[as.numeric(as.factor(drugs_scores$col_group3d))]
+
+    plot1 <- rgl::plot3d(
+      x=drugs_scores$PCx, y=drugs_scores$PCy, z=drugs_scores$PCz,
+      col = drugs_scores$color,
+      type = 'p',
+      size = size_point,
+      radius = size_point,
+      xlab= PCnamex,
+      ylab= PCnamey,
+      zlab= PCnamez,
+      box = F)
+
   } else{
     colnames(drugs_scores) <- c('PCx','PCy')
     #drugs_scores = cbind.data.frame(group = )
     plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx,y = PCy,col = col_group)) +
-      ggplot2::geom_point(size = 3)+
+      ggplot2::geom_point(size = size_point)+
       ggplot2::theme_bw(base_size = 16) +
       ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey)
 

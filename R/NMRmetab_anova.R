@@ -45,7 +45,10 @@ NMRMetab_anova = function(data, index_col = 3, group_test = 'group', sigLevel = 
   cat(sprintf('\nPerforming ANOVA with %s multiple testing correction and %.2f significance level\n', adjMethod, sigLevel))
   cat(sprintf('and Tukey post-hoc analysis with %d pairwise comparisons.\n\n', 2^length(levels(grp))))
   res = do_anova_m(data_, grp, adjustMethod = adjMethod, thresh = sigLevel)
-  print_anova_res(res, sigLvl = sigLevel)
+  if (ncol(res$tukey_pvals) != 0){
+    print_anova_res(res, sigLvl = sigLevel)
+  }
+
 
 
   p = plot.Pvals(res$anova_pvals,sigLvl = sigLevel)

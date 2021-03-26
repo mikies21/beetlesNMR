@@ -126,3 +126,36 @@ NMRMetabCRS <- function(dat, metabolite_list, save_excell = F) {
 
   return(output)
 }
+
+
+
+
+#' @title swap metabolite names to HMDB
+#' @name NMRMetab_names_to_HMDB
+#' @export
+#' @description
+#' @author Michele Fresneda Alarcon
+#' @param dat a data.frame. Column as variable and rows as sample
+#' @param metabolite_list a data.frame. with rows as metabolites.. column names are 'HMDB' and 'Metab'
+#' @param index_col column number with first metabolite
+
+
+NMRMetab_names_to_HMDB <- function(dat, metabolite_list, index_col = 3){
+
+  patt <- metab_list$Metab
+  repl <- metab_list$HMDB
+  group_columns <- colnames(dat)[1:index_col-1]
+  new_names <- lapply(str_split(colnames(dat[index_col:ncol(dat)]), pattern = "_"), function(x) {
+    number <- x[length(x)]
+    find_names <- grepl(paste0("^", x, "$", collapse = "|"), patt)
+    HMDBs <- repl[find_names]
+    HMDBs <- paste(HMDBs, collapse = "_")
+    HMDBs <- paste(HMDBs, number, sep = "_")
+  })
+
+
+  new_names <- unlist(new_names)
+
+  colnames(dat) <- c(group_columns, new_names)
+  return(dat)
+}
