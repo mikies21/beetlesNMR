@@ -1,22 +1,3 @@
-
-# Eva Caamano Gutierrez and Arturas Grauslys, 2017.
-# This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-# R script for performing one-way ANOVA and post-hoc analysis
-#
-# Analysis is performed by calling do_anova function with parameters:
-#
-# - data: a data frame with samples in the rows and variables (bins) in the columns.
-#   The first column in the data (not counting sample names) should be a grouping variable
-#
-# - sigLevel: significace level at which the test should be performed. Ex: 0.05
-#
-# - adjMethod: the method for multiple testing correction (must be between quotes).
-#     Available methods: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
-#     "BH" stands for Benjamini-Hochberg; "BY" for Benjamini-Yakutieli; "fdr" is false discovery rate (same as "BH")
-
-
 #' @title Normalisation and Scaling
 #' @name NMRMetab_anova
 #' @export

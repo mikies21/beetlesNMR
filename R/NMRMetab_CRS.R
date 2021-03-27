@@ -100,18 +100,28 @@ NMRMetabCRS <- function(dat, metabolite_list, correlation_type = 'pearson', save
     theme(axis.text.x = element_text(angle = 90)) +
     labs(y = "frequency", title = "Metabolite frequency", subtitle = "number of times each metabilite was identified in binned data")
 
+
   summary_data <- dplyr::bind_rows(CRS_scores, .id = 'Metabolite') %>%
-    dplyr::mutate(bin_IDs = gsub("^.*_", "", metab_bins)) %>%
-    tidyr::nest(data = c(metab_bins,CRS_score,bin_IDs)) %>%
+    #dplyr::mutate(bin_IDs = gsub("^.*_", "", metab_bins)) %>%
+    tidyr::nest(data = c(metab_bins,CRS_score)) %>%
     dplyr::right_join(frequency_metabs, by =c('Metabolite')) %>%
+    dplyr::rename(frequency_bin = n) %>%
     dplyr::mutate(
       highest_corr = purrr::map(data, function(x){
         max_score <- x %>% dplyr::pull('CRS_score') %>% max()
       }),
       smallest_corr = purrr::map(data, function(x){
         max_score <- x %>% dplyr::pull('CRS_score') %>% min()
+      }),
+      bin_IDs = purrr::map(data,function(x){
+        x$bin <- gsub("^.*_", "", x$metab_bins)
+        paste0(x$bin, collapse = ', ')
+      }),
+      best_bin = purrr::map(data, function(x){
+        best_bin <- x %>% dplyr::slice_max(CRS_score) %>% dplyr::pull(metab_bins)
+
       })) %>%
-    tidyr::unnest(cols = c(highest_corr, smallest_corr))
+    tidyr::unnest(cols = c(highest_corr, smallest_corr, bin_IDs, best_bin))
 
 
 
