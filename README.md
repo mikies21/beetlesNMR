@@ -10,9 +10,13 @@ devtools::install_github('mikies21/beetlesNMR')
 
 ### Reading in NMR data
 
-in my previous analysis I have used a tool insude the galaxy.ac.uk universe which allows users, by zipping the bruker experiment files and uploading them on the platform, to extract the complete raw spectra of all the experiments (ppm in the first column and samplesID in the subsequent columns).
+In my previous analysis I have used a tool insude the galaxy.ac.uk universe which allows users, by zipping the bruker experiment files and uploading them on the platform, to extract the complete raw spectra of all the experiments (ppm in the first column and samplesID in the subsequent columns).
 To automate this a function was created (**however not completely optimised yet. reads the original raw data and any changes (ie. alignment) made with topspin will not be accounted. need help fixing it plssss**)
 
 ```
 raw_NMR_df <- NMRMetab_readBruker('path_to experiment_folder')
 ```
+
+### Binning
+
+Once the raw data is loaded int your environment. 
