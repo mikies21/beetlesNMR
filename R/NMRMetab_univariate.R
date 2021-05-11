@@ -39,87 +39,87 @@
 
 NMRMetab_UnivarTest<-function(data, groupID,index_col = 3, paired=F,normality=T,equal.variance=F){
 
-  #This function is created for only 2 groups
-  dat<-data[,index_col:ncol(data)]
-  groups<-unique(data[,groupID])
 
-  pvals<-c()
-  metabolite<-c()
-  ConfInt<-c()
+    #This function is created for only 2 groups
+    dat<-data[,3:ncol(data)]
+    groups<-unique(data[,2])
 
-  for(i in 1:ncol(dat)){
-    g1<-dat[data[,2]==groups[1],i]
-    g2<-dat[data[,2]==groups[2],i]
+    pvals<-c()
+    metabolite<-c()
+    ConfInt<-c()
 
-    if(normality==T){
-      if(equal.variance==F){
-        if(paired==F){
-          a<-t.test(g1,g2,var.equal=F,paired=F,na.action=na.rm)
-          if(i==1){
-            print("Doing a two-sided independent samples Welch Test")
+    for(i in 1:ncol(dat)){
+      g1<-dat[data[,2]==groups[1],i]
+      g2<-dat[data[,2]==groups[2],i]
+
+      if(normality==T){
+        if(equal.variance==F){
+          if(paired==F){
+            a<-t.test(g1,g2,var.equal=F,paired=F,na.action=na.rm)
+            if(i==1){
+              print("Doing a two-sided independent samples Welch Test")
+            }
+          }else{
+            a<-t.test(g1,g2,var.equal=F,paired=T,na.action=na.rm)
+            if(i==1){
+              print("Doing a two-sided paired Welch Test")
+            }
           }
         }else{
-          a<-t.test(g1,g2,var.equal=F,paired=T,na.action=na.rm)
-          if(i==1){
-            print("Doing a two-sided paired Welch Test")
+          if(paired==F){
+            a<-t.test(g1,g2,var.equal=T,paired=F)
+            if(i==1){
+              print("Doing a two-sided independent samples Student's t-test")
+            }
+          }else{
+            a<-t.test(g1,g2,var.equal=T,paired=T)
+            if(i==1){
+              print("Doing a two-sided paired Student's t-test")
+            }
           }
         }
       }else{
-        if(paired==F){
-          a<-t.test(g1,g2,var.equal=T,paired=F)
-          if(i==1){
-            print("Doing a two-sided independent samples Student's t-test")
+        if(equal.variance==F){
+          if(paired==F){
+            a<-ks.test(g1,g2)
+            #aa<-t.test(g1,g2,var.equal = F,paired=F)
+            if(i==1){
+              print("Doing a Kolmogorov-Smirnov Test")
+            }
+          }else{
+            a<-wilcox.test(g1,g2,paired=T,conf.int = T)
+            if(i==1){
+              print("Doing a Wilcoxon's matched pairs test")
+            }
           }
         }else{
-          a<-t.test(g1,g2,var.equal=T,paired=T)
-          if(i==1){
-            print("Doing a two-sided paired Student's t-test")
+          if(paired==F){
+            a<-wilcox.test(g1,g2,var.equal=T,paired=F,conf.int = T)
+            print("Doing a two-sided Mann-Whitney U-test")
+          }else{
+            a<-wilcox.test(g1,g2,paired=T,conf.int = T)
+            print("Doing a Wilcoxon's matched pairs test test")
           }
         }
       }
-    }else{
-      if(equal.variance==F){
-        if(paired==F){
-          a<-ks.test(g1,g2)
-          #aa<-t.test(g1,g2,var.equal = F,paired=F)
-          if(i==1){
-            print("Doing a Kolmogorov-Smirnov Test")
-          }
-        }else{
-          a<-wilcox.test(g1,g2,paired=T,conf.int = T)
-          if(i==1){
-            print("Doing a Wilcoxon's matched pairs test")
-          }
-        }
-      }else{
-        if(paired==F){
-          a<-wilcox.test(g1,g2,var.equal=T,paired=F,conf.int = T)
-          print("Doing a two-sided Mann-Whitney U-test")
-        }else{
-          a<-wilcox.test(g1,g2,paired=T,conf.int = T)
-          print("Doing a Wilcoxon's matched pairs test test")
-        }
-      }
-    }
 
-    pvals<-c(pvals,a$p.value);
-    metabolite<-c(metabolite,colnames(dat)[i])
-    if(is.null(a$conf.int)){
-      #ConfInt<-c(ConfInt,paste("(",round(aa$conf.int[1],5),",",round(aa$conf.int[2],5),")",sep=""))
-      ConfInt<-c(ConfInt,"Not in this test")
-      #ConfInt<-c(ConfInt,NA)
-    }else{
-      ConfInt<-c(ConfInt,paste("(",round(a$conf.int[1],5),",",round(a$conf.int[2],5),")",sep=""))
+      pvals<-c(pvals,a$p.value);
+      metabolite<-c(metabolite,colnames(dat)[i])
+      if(is.null(a$conf.int)){
+        #ConfInt<-c(ConfInt,paste("(",round(aa$conf.int[1],5),",",round(aa$conf.int[2],5),")",sep=""))
+        ConfInt<-c(ConfInt,"Not in this test")
+        #ConfInt<-c(ConfInt,NA)
+      }else{
+        ConfInt<-c(ConfInt,paste("(",round(a$conf.int[1],5),",",round(a$conf.int[2],5),")",sep=""))
+      }
     }
+    pvalsNA<-round((pvals),4)
+    pvalsBH<-round(p.adjust(pvals,method="BH"),5)
+    pvalsBonf<-round(p.adjust(pvals,method="bonferroni"),5)
+
+    out<-data.frame(metabolite, ConfInt, pvalsNA,pvalsBH, pvalsBonf)
+    colnames(out)<-c("Metabolite/Bucket","95% Conf. Int. Mean.","Unadjusted pvals","BH pvals","Bonf pvals")
+    return(out)
   }
-  pvalsNA<-round((pvals),4)
-  pvalsBH<-round(p.adjust(pvals,method="BH"),5)
-  pvalsBonf<-round(p.adjust(pvals,method="bonferroni"),5)
-
-  out<-data.frame(metabolite, ConfInt, pvalsNA,pvalsBH, pvalsBonf)
-
-  colnames(out)<-c("Metabolite.Bucket","95% Conf.Int.Mean.","Unadjusted_pvals","BH_pvals","Bonf_pvals")
-  return(out)
-}
 
 

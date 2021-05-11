@@ -16,7 +16,7 @@ NMRMetab_norm_scale = function(data, index_col = 3, normalisation = 'None', bin 
 
   #separate data from groups
   data_ = as.matrix(data[,index_col:ncol(data)])
-  grp = as.factor(data[,1:index_col-1])
+  grp = data[,1:index_col-1]
 
   # apply normalisation
   if (normalisation == 'None'){
@@ -56,8 +56,8 @@ NMRMetab_norm_scale = function(data, index_col = 3, normalisation = 'None', bin 
     cat(sprintf('Method does not exist: %s \n', scaling))
   }
 
-  dataLabs = data[,1:index_col-1]
-  out_data = cbind(dataLabs, as.data.frame(data_))
+  #dataLabs = data[,1:index_col-1]
+  out_data = cbind(grp, data_)
 
   if(writeToFile){
     # make output folder and write the data to file

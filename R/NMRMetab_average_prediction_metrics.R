@@ -53,7 +53,7 @@ NMRmetab_average_prediction_metrics = function(dat,
       plsda_model <- mixOmics::plsda(
         X = dat_train[, index_col:ncol(dat_train)],
         Y = factor(dat_train[, groupID]),
-        ncomp = components_model
+        ncomp = components_model, scale = F
       ) ### change number of components appropiately
 
       if (run_CV & components_model == i) {
@@ -194,18 +194,18 @@ NMRMetab_PLS_DA_plot <- function(data, groupID = 'group',index_col = 3 ,componen
     data = NMRMetab_norm_scale(data = data,index_col = index_col,scaling = 'Pareto')
   }
 
-  meta_data = data[,1:c(index_col-1)]
+  meta_data = data[,1:index_col-1]
   matrix = data[,index_col:ncol(data)]
   #scale the data
 
   model = mixOmics::plsda(X=matrix,
                           Y= meta_data[,groupID],
-                          ncomp = max(components))
+                          ncomp = max(components),scale = F)
 
-  comps_scores = cbind.data.frame('group' = meta_data[,groupID], model$variates$X[,components])
+  comps_scores = cbind.data.frame(model$variates$X[,components], 'group' = meta_data[,groupID])
 
   if (length(components)==3) {
-    colnames(comps_scores) <- c('group', 'compx', 'compy', 'compz')
+    colnames(comps_scores) <- c('compx', 'compy', 'compz', 'group')
 
     mycolors <- RColorBrewer::brewer.pal(n = 8,name = 'Dark2')[1:length(unique(comps_scores$group))]
     comps_scores$color <- mycolors[as.numeric(as.factor(comps_scores$group))]
@@ -221,7 +221,7 @@ NMRMetab_PLS_DA_plot <- function(data, groupID = 'group',index_col = 3 ,componen
       zlab= paste('comp', components[3], sep = ''),
       box = F)
   } else {
-    colnames(comps_scores) <- c('group', 'compx', 'compy')
+    colnames(comps_scores) <- c('compx', 'compy','group')
 
     p = ggplot2::ggplot(comps_scores,
                         aes(x= compx,
