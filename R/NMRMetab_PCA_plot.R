@@ -23,13 +23,15 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
   PCnames <- colnames(drugs_scores)[pcs]
   PCnamex <- paste(PCnames[1], " (", prop_var[1], "%)", sep = "")
   PCnamey <- paste(PCnames[2], " (", prop_var[2], "%)", sep = "")
-  col_group <- data[, groupID]
+  col_group <- data[1:index_col-1]
+
 
   if (length(pcs)==3) {
+    drugs_scores <- cbind.data.frame(drugs_scores, col_group)
     PCnamez <- paste(PCnames[3], " (", prop_var[3], "%)", sep = "")
-    colnames(drugs_scores) <- c('PCx','PCy','PCz')
+    colnames(drugs_scores[1:3]) <- c('PCx','PCy','PCz')
 
-    drugs_scores$col_group3d <- col_group
+    drugs_scores$col_group3d <- drugs_scores[,groupID]
     mycolors <- RColorBrewer::brewer.pal(n = 8,name = 'Dark2')[1:length(unique(col_group))]
     drugs_scores$color <- mycolors[as.numeric(as.factor(drugs_scores$col_group3d))]
 
@@ -45,21 +47,22 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
       box = F)
 
   } else{
-    colnames(drugs_scores) <- c('PCx','PCy')
+    drugs_scores <- cbind.data.frame(col_group, drugs_scores)
+    #colnames(drugs_scores) <- c('PCx','PCy')
     #drugs_scores = cbind.data.frame(group = )
-    plot1 <- ggplot2::ggplot(drugs_scores, aes(x = PCx,y = PCy,col = col_group)) +
+    plot1 <- ggplot2::ggplot(drugs_scores, aes_string(x = PCnames[1],y = PCnames[2],colour = groupID)) +
       ggplot2::geom_point(size = size_point)+
       ggplot2::theme_bw(base_size = 16) +
-      ggplot2::labs(col = groupID, x = PCnamex,y = PCnamey)
+      ggplot2::labs(x = PCnamex, y = PCnamey)
 
     if (elipses == T) {
-      plot1 = plot1 + ggplot2::stat_ellipse(aes(x = PCx, y = PCy, colour = col_group))
+      plot1 = plot1 + ggplot2::stat_ellipse(aes_string(x = PCnames[1],y = PCnames[2],colour = groupID))
     }
   }
   return(plot1)
 
 }
-
+NMRMetab_PCA_plot(data = JAKi_data,groupID = 'group',index_col = 8)
 
 #' @title PCA analysis loading plot
 #' @name NMRMetab_PCA_loading_plot
