@@ -40,8 +40,8 @@ NMRMetab_plot_binned <- function(binned_data, index_col = 2, group_var = 'sample
       ) %>%
       dplyr::ungroup()
 
-    p <- ggplot2::ggplot(data = sample_sum, aes(x = x, group = grp, col = grp, stat = "identity")) +
-      geom_line(aes(y = mean))
+    p <- ggplot2::ggplot(data = sample_sum, aes(x = x, y = mean, group = grp, col = grp, stat = "identity")) +
+      geom_line()
 
     p <- p +
       theme_bw() +
