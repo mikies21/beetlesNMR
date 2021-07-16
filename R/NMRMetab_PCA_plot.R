@@ -62,7 +62,6 @@ NMRMetab_PCA_plot = function(data, groupID, index_col = 2, elipses = F, pcs = c(
   return(plot1)
 
 }
-NMRMetab_PCA_plot(data = JAKi_data,groupID = 'group',index_col = 8)
 
 #' @title PCA analysis loading plot
 #' @name NMRMetab_PCA_loading_plot

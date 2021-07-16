@@ -73,15 +73,19 @@ NMRMetab_plot_raw_with_bins <- function(raw_data, pattern_file = NULL, min_x, ma
 
   ppm <- min_ppm <- max_ppm <- bin <- value <- sampleID <- change <- NULL
 
+
+
   binnend_raw = raw_data %>%
     dplyr::filter(between(ppm,left = min_x, right = max_x))
 
+
   if (is.null(pattern_file)) {
     data_to_plot = binnend_raw %>%
-      tidyr::pivot_longer(!ppm, names_to = 'sampleID',values_to = 'value')
+      tidyr::pivot_longer(!ppm, names_to = 'sampleID',values_to = 'value')+
     ggplot2::ggplot() +
       ggplot2::geom_line(data = data_to_plot,aes(x = ppm, y = value, col = sampleID),show.legend = F) +
-      ggplot2::theme_bw(base_size = 7)
+      ggplot2::theme_bw(base_size = 7)+
+      ggplot2::scale_x_reverse()
   }
   else{
     binnend_pattern = pattern_file %>%
@@ -96,7 +100,8 @@ NMRMetab_plot_raw_with_bins <- function(raw_data, pattern_file = NULL, min_x, ma
       ggplot2::geom_line(data = data_to_plot,aes(x = ppm, y = value, col = sampleID),show.legend = F) +
       ggplot2::theme_bw(base_size = 7) +
       geom_rect(data = binnend_pattern, aes(xmin = min_ppm, xmax =max_ppm, ymin = 0, ymax = ymax), alpha = 0.2, col = 'black')+
-      ggrepel::geom_text_repel(data= binnend_pattern, aes(x=min_ppm+change/2, y=ymax, label=bin,angle = 45), size=3)
+      ggrepel::geom_text_repel(data= binnend_pattern, aes(x=min_ppm+change/2, y=ymax, label=bin,angle = 45), size=3)+
+      ggplot2::scale_x_reverse()
   }
 
 }
