@@ -25,7 +25,7 @@ NMRMetab_binning <- function(data, pattern_file){
     ppm = x$ppm
     #print(ppm)
     apply(x %>% dplyr::select(-ppm), 2, function(y) {
-      areaucurve = bayestestR::area_under_curve(x = ppm, y = y, method = 'trapezoid') * 1000
+      areaucurve = sum(y)
     })
   }) %>%
     dplyr::bind_rows(.id = 'bin') %>%

@@ -6,6 +6,7 @@ Author: Michele Fresneda Alarcon
 Maintainer: The package maintainer <michelefresneda@gmail.com>
 Description: general set of functions needed for my analysis
     Use four spaces when indenting paragraphs within the Description.
+SystemRequirements: python
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
