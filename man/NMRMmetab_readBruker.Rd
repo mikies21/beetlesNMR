@@ -4,10 +4,10 @@
 \alias{NMRMmetab_readBruker}
 \title{read Bruker files}
 \usage{
-NMRMmetab_readBruker(BrukerDataDir)
+NMRMmetab_readBruker(path_to_file)
 }
 \arguments{
-\item{BrukerDataDir}{a string. path to the NMR experiment folder}
+\item{path_to_file}{a string. path to the NMR experiment folder}
 }
 \description{
 takes the path where al the experiment files are, returns a dataframe with ppm as first column and samples as subsequent column. not working properly yet as evn tho data was previously aligned in topspin this was not reflected in this.
