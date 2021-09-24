@@ -8,7 +8,7 @@
 
 
 NMRMmetab_readBruker<- function(path_to_file){
-  path <- paste(system.file(package = 'beetlesNMR'), 'inst/python/read_bruker_pyt.py', sep = '/')
+  path <- paste(system.file(package = 'beetlesNMR'), 'python/read_bruker_pyt.py', sep = '/')
 
   reticulate::source_python(file = path)
   dat <- read_data(path_to_file)
