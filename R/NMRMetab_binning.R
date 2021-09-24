@@ -57,16 +57,18 @@
 
 
 # from tame NMR -----------------------------------------------------------
-
-NMRMetab_binning <- function(data, pattern){
+NMRMetab_binning<- function(data, pattern){
+  #get ppm
+  ppms <- as.numeric(data$ppm)
+  #separate data from ppm
   data <- data[2:ncol(data)]
-  ppms <- data[,1]
-
+  
+  
   ppmInterval2Pos <- function(ppms, interval){
     bin = which(ppms>=min(interval) & ppms<=max(interval))
-    c(min(bin),max(bin))
+    return(c(min(bin),max(bin)))
   }
-
+  
   fixDupes = function(labels, dupes){
     unis = unique(labels[dupes])
     for(lab in unis){
@@ -75,30 +77,31 @@ NMRMetab_binning <- function(data, pattern){
     }
     labels
   }
-
+  
   # find and modify duplicated bin labels
   dupes = duplicated(pattern[,'bin'])
   if (any(dupes))
     pattern[,'bin'] = fixDupes(pattern[,'bin'], which(dupes))
-
+  
   data = data * 1.0
   #convert ppms to positions in the data matrix
-  bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,c('max_ppm','min_ppm')])))
+  bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,c('max_ppm', 'min_ppm')])))
   binSize = abs(bins[,2] - bins[,1]) + 1
   print(bins)
+  print(binSize)
   print(dim(bins))
   dataInt = do.call('cbind', lapply(1:nrow(bins), function(i) apply(data[bins[i,1]:bins[i,2],], 2, sum)/binSize[i]))
   dataInt = as.data.frame(dataInt, stringsAsFactors=F)
-
+  
   dupes = duplicated(colnames(data))
   if (any(dupes)){
     tempNames = fixDupes(colnames(data), which(dupes))
   } else {
     tempNames = colnames(data)
   }
-
+  
   rownames(dataInt) = tempNames
   names(dataInt) = pattern[,'bin']
-  dataInt
+  final_data <- dataInt %>% tibble::rownames_to_column('sampleID')
+  return(final_data)
 }
-
