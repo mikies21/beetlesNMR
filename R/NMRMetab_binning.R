@@ -83,7 +83,7 @@ NMRMetab_binning <- function(data, pattern){
 
   data = data * 1.0
   #convert ppms to positions in the data matrix
-  bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,'max_ppm':'min_ppm'])))
+  bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,c('max_ppm','min_ppm')])))
   binSize = abs(bins[,2] - bins[,1]) + 1
   print(bins)
   print(dim(bins))
