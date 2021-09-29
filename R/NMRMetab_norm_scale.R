@@ -20,40 +20,40 @@ NMRMetab_norm_scale = function(data, index_col = 3, normalisation = 'None', bin 
 
   # apply normalisation
   if (normalisation == 'None'){
-    cat('Normalisation: None\n')
+    #cat('Normalisation: None\n')
   } else if (normalisation == 'PQN'){
     data_ = PQN(data_)
-    cat('Normalisation: PQN\n')
+    #cat('Normalisation: PQN\n')
   } else if (normalisation == 'TotArea'){
     data_ = TotArea(data_)
-    cat('Normalisation: Total area\n')
+    #cat('Normalisation: Total area\n')
   } else if (normalisation == 'Bin'){
     if (!is.na(bin)){
       data_ = NormByBin(data_, bin)
-      cat('Normalisation: Bin\n')
-      cat(sprintf('Selected bin: %s \n', as.character(bin)))
+      #cat('Normalisation: Bin\n')
+      #cat(sprintf('Selected bin: %s \n', as.character(bin)))
     } else {
-      print(paste('Method does not exist: ', normalisation, sep=''))
+      #print(paste('Method does not exist: ', normalisation, sep=''))
     }
   }
 
   #apply scaling
   if (scaling == 'None'){
-    cat('Scaling: None\n')
+    #cat('Scaling: None\n')
   } else if (scaling == 'Auto'){
     data_ = apply(data_, 2, AutoScale)
-    cat('Scaling: Auto\n')
+    #cat('Scaling: Auto\n')
   } else if (scaling == 'Pareto'){
     data_ = apply(data_, 2, ParetoScale)
-    cat('Scaling: Pareto\n')
+    #cat('Scaling: Pareto\n')
   } else if (scaling == 'Range') {
     data_ = apply(data_, 2, RangeScale)
-    cat('Scaling: Range\n')
+    #cat('Scaling: Range\n')
   } else if (scaling == 'Mean') {
     data_ = scale(data_, center=T, scale=F)
-    cat('Scaling: Mean\n')
+    #cat('Scaling: Mean\n')
   } else {
-    cat(sprintf('Method does not exist: %s \n', scaling))
+    #cat(sprintf('Method does not exist: %s \n', scaling))
   }
 
   #dataLabs = data[,1:index_col-1]
