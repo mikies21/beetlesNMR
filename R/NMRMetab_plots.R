@@ -8,7 +8,7 @@
 #' @param binned_data a data.frame. Column as variable and rows as sample
 #' @param index_col integer. index number of the colum with the firsst metabllite measurement
 #' @param group_var string. the name of the grouping vairable. defails is sampleID. change appropiately
-
+#' @param plot string. the name of the grouping vairable. defails is sampleID. change appropiately
 
 
 NMRMetab_plot_binned <- function(binned_data, index_col = 2, group_var = 'sampleID') {
@@ -50,7 +50,8 @@ NMRMetab_plot_binned <- function(binned_data, index_col = 2, group_var = 'sample
       ylab("Intensity") +
       theme(plot.title = element_text(hjust = 0.5), axis.text.x  = element_text(angle = 90),legend.position = 'none')
 
-    plot(p)
+
+    #plot(p)
     return(p)
 
 
